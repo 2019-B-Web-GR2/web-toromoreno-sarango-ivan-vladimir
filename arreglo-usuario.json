@@ -1,0 +1,23 @@
+[{
+  "id": "1",
+  "nombre": "Iván",
+  "casado": false,
+  "hijos": false,
+  "deudas": false,
+  "mascota": {
+    "id": "1",
+    "nombre": "Kirenya"
+  },
+  "apellido": "Toromoreno"
+},{
+  "id": "2",
+  "nombre": "Jessica",
+  "casado": false,
+  "hijos": false,
+  "deudas": false,
+  "mascota": {
+    "id": "1",
+    "nombre": "Kirenya"
+  },
+  "apellido": "Toromoreno"
+}]
