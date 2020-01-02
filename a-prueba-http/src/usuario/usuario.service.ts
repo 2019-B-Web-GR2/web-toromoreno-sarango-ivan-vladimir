@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {UsuarioEntity} from './usuario.entity';
-import {DeleteResult, Repository} from 'typeorm';
+import {DeleteResult, LessThan, Like, MoreThan, Repository} from 'typeorm';
 
 @Injectable()
 export class UsuarioService {
@@ -30,14 +30,51 @@ export class UsuarioService {
     }
 
     buscar(
-        where: UsuarioEntity | UsuarioEntity[],
+        where: any = {},
         skip: number = 0,
         take: number = 10,
-    ) {
-        this._repositorioUsuario.find({
-            where: where,
-            skip: skip,
-            take: take,
-        });
+        order: any = {
+            id: 'DESC',
+            name: 'ASC',
+        },
+    ): Promise<UsuarioEntity[]> {
+
+        //Exactamente el nombre o exactamente la cédula
+        const consultaWhere = [
+            {
+                nombre:  where,
+            },
+            {
+                cedula: where,
+            },
+        ];
+
+        // Exactamente el nombre o LIKE la cedula
+        const consultaWhereLike = [
+            {
+                nombre: Like('a%'),
+            },
+            {
+                cedula: Like('%a'),
+            },
+        ];
+
+        //Id sea mayor a 20
+
+        const consultaWhereMoreThan = {
+            id: MoreThan(20),
+        };
+
+        const consultaWhereLessThan = {
+            id: LessThan(20),
+        };
+
+        return this._repositorioUsuario
+            .find({
+                where: where,
+                skip: skip,
+                take: take,
+                order: order,
+            });
     }
 }
