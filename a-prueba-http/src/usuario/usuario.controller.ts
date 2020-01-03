@@ -1,18 +1,60 @@
-import {BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query} from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    Query,
+    Session,
+    UnauthorizedException
+} from '@nestjs/common';
 import {UsuarioService} from "./usuario.service";
 import {UsuarioEntity} from "./usuario.entity";
 import {DeleteResult} from "typeorm";
 import * as Joi from '@hapi/joi';
 import {UsuarioCreateDto} from "./usuario.create-dto";
 import {validate} from "class-validator";
+import {UsuarioUpdateDto} from "./usuario.update-dto";
+import {ok} from "assert";
 
 @Controller('usuario')
 export class UsuarioController {
+
+    //Adm -> Crea, actualiza y elimina
+    //Sup -> actualiza
 
     constructor(
         // tslint:disable-next-line:variable-name
         private readonly _usuarioService: UsuarioService,
     ) {
+    }
+
+    @Get('hola')
+    hola(): string {
+        return `
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+             <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+                         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+             <title>EPN</title>
+</head>
+<body>
+  <h1>Mi primera página web</h1>
+</body>
+</html>
+`;
+    }
+
+    @Get('sesion')
+    sesion(
+        @Session() session,
+    ) {
+        return session;
     }
 
     //Get /model/:id
@@ -27,7 +69,14 @@ export class UsuarioController {
     @Post()
     async crearUsuario(
         @Body() usuario: UsuarioEntity,
+        @Session() session,
     ): Promise<UsuarioEntity> {
+        const isAdm = session.usuario.roles.find(rol => {
+            return rol === 'Administrador';
+        });
+        if (!isAdm) {
+            throw new UnauthorizedException('Error', 'No cuenta con permisos para realizar la acción');
+        }
         const usuarioCreateDTO = new UsuarioCreateDto();
         usuarioCreateDTO.nombre = usuario.nombre;
         usuarioCreateDTO.cedula = usuario.cedula;
@@ -37,29 +86,47 @@ export class UsuarioController {
         } else {
             return this._usuarioService
                 .crearUno(
-                    usuario
+                    usuario,
                 );
         }
-        return this._usuarioService
-            .crearUno(usuario);
     }
 
     @Put()
-    actualizarUnUsuario(
+    async actualizarUnUsuario(
         @Body() usuario: UsuarioEntity,
         @Param('id') id: string,
+        @Session() session,
     ) {
-        return this._usuarioService
-            .actualizarUno(
-                +id,
-                usuario,
-            );
+        const isAdm = session.usuario.roles.find(rol => {
+            return (rol === 'Administrador' || rol === 'Supervisor');
+        });
+        const usuarioUpdateDTO = new UsuarioUpdateDto();
+        usuarioUpdateDTO.nombre = usuario.nombre;
+        usuarioUpdateDTO.cedula = usuario.cedula;
+        usuarioUpdateDTO.id = +id;
+        const errores = await validate(usuarioUpdateDTO);
+        if (errores.length > 0) {
+            throw new BadRequestException('Error validando');
+        } else {
+            return this._usuarioService
+                .actualizarUno(
+                    +id,
+                    usuario,
+                );
+        }
     }
 
     @Delete()
     eliminarUno(
         @Param('id') id: string,
+        @Session() session,
     ): Promise<DeleteResult> {
+        const isAdm = session.usuario.roles.find(rol => {
+            return rol === 'Administrador';
+        });
+        if (!isAdm) {
+            throw new UnauthorizedException('Error', 'No cuenta con permisos para realizar la acción');
+        }
         return this._usuarioService
             .borrarUno(
                 +id,
@@ -113,4 +180,31 @@ export class UsuarioController {
             order,
         );
     }
+
+    @Post('login')
+    login(
+        @Body('username') username: string,
+        @Body('password') password: string,
+        @Session() session,
+    ) {
+        console.log('Session', session);
+        if (username === 'adrian' && password === '1234') {
+            session.usuario = {
+                nombre: 'Adrian',
+                userId: 1,
+                roles: ['Administrador'],
+            };
+            return 'ok';
+        } else if (username === 'vicente' && password === '1234') {
+            session.usuario = {
+                nombre: 'Vicente',
+                userId: 2,
+                roles: ['Supervisor'],
+            };
+            return 'ok';
+        }
+        throw new BadRequestException('Error', 'Error autenticando');
+    }
+
+
 }
