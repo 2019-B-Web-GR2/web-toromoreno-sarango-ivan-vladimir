@@ -7,7 +7,7 @@ import {
     Param,
     Post,
     Put,
-    Query,
+    Query, Req, Res,
     Session,
     UnauthorizedException
 } from '@nestjs/common';
@@ -32,8 +32,38 @@ export class UsuarioController {
     ) {
     }
 
+    @Get('ejemploejs')
+    ejemploejs(
+        @Res() res,
+    ) {
+        res.render('ejemplo', {
+            datos: {
+                nombre: 'Adrian',
+            },
+        });
+    }
+
+    @Get('logout')
+    logout(
+        @Session() session,
+        @Req()req,
+    ) {
+        session.usuario = undefined;
+        req.session.destroy();
+        return 'Deslogueado';
+    }
+
     @Get('hola')
-    hola(): string {
+    hola(
+        @Session() session,
+    ): string {
+        let roles: string = `<ul>`;
+        if (session.usuario) {
+            session.usuario.roles.forEach(rol => {
+                roles += `<li> ${rol} </li>`;
+            });
+        }
+        roles += `</ul>`;
         return `
 <!doctype html>
 <html lang="en">
@@ -44,10 +74,12 @@ export class UsuarioController {
              <title>EPN</title>
 </head>
 <body>
-  <h1>Mi primera página web</h1>
+  <h1>Mi primera página web ${
+            session.usuario ? session.usuario.nombre : ''
+        }</h1>
 </body>
 </html>
-`;
+` + roles;
     }
 
     @Get('sesion')
@@ -205,6 +237,4 @@ export class UsuarioController {
         }
         throw new BadRequestException('Error', 'Error autenticando');
     }
-
-
 }
