@@ -16,7 +16,7 @@ import {UsuarioService} from "./usuario/usuario.service";
             username: 'LazaMH',
             password: '1234',
             database: 'Prueba',
-            dropSchema: true,
+            dropSchema: false,
             entities: [
                 UsuarioEntity,
             ],

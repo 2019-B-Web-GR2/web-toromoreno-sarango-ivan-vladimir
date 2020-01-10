@@ -35,7 +35,7 @@ export class UsuarioService {
         take: number = 10,
         order: any = {
             id: 'DESC',
-            name: 'ASC',
+            nombre: 'ASC',
         },
     ): Promise<UsuarioEntity[]> {
 
