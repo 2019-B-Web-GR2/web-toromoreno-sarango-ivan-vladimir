@@ -39,8 +39,14 @@ export class UsuarioController {
         res.render('ejemplo', {
             datos: {
                 nombre: 'Adrian',
+                suma: this.suma,
+                joi: Joi
             },
         });
+    }
+
+    suma(numUno, numDos) {
+        return numUno + numDos;
     }
 
     @Get('logout')
