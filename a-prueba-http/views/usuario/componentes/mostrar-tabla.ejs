@@ -1,3 +1,25 @@
-<% usuarios.forEach( (usuario) => {%>
-    <p><%= usuario.nombre%> </p>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Cédula</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+<%usuarios.forEach( (usuario) => {%>
+    <tr>
+          <th scope="row"><%=usuario.id%></th>
+          <td><%=usuario.nombre%></td>
+          <td><%=usuario.cedula%></td>
+          <td>
+            <button type="button"
+                    class="btn btn-info"> Editar </button>
+            <button type="button"
+                    class="btn btn-info"> Eliminar </button>
+          </td>
+        </tr>
 <%}); %>
+  </tbody>
+</table>

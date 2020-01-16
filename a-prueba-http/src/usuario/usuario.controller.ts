@@ -47,6 +47,15 @@ export class UsuarioController {
         );
     }
 
+    @Get('ruta/crear-usuario')
+    rutaCrearUsuarios(
+        @Res() res,
+    ) {
+        res.render(
+            'usuario/rutas/crear-usuario',
+        );
+    }
+
     @Get('ejemploejs')
     ejemploejs(
         @Res() res,
@@ -124,12 +133,12 @@ export class UsuarioController {
         @Body() usuario: UsuarioEntity,
         @Session() session,
     ): Promise<UsuarioEntity> {
-        const isAdm = session.usuario.roles.find(rol => {
-            return rol === 'Administrador';
-        });
-        if (!isAdm) {
-            throw new UnauthorizedException('Error', 'No cuenta con permisos para realizar la acción');
-        }
+        // const isAdm = session.usuario.roles.find(rol => {
+        //     return rol === 'Administrador';
+        // });
+        // if (!isAdm) {
+        //     throw new UnauthorizedException('Error', 'No cuenta con permisos para realizar la acción');
+        // }
         const usuarioCreateDTO = new UsuarioCreateDto();
         usuarioCreateDTO.nombre = usuario.nombre;
         usuarioCreateDTO.cedula = usuario.cedula;
