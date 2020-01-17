@@ -32,9 +32,20 @@ export class UsuarioController {
     ) {
     }
 
+    @Get('ruta/login')
+    async rutaAutenticar(
+        @Res() res,
+    ) {
+        res.render(
+            'login/login',
+        );
+    }
+
     @Get('ruta/mostrar-usuarios')
     async rutaMostrarUsuarios(
         @Res() res,
+        @Query('error') error: string,
+        @Query('exito') exito: string
     ) {
         const usuarios = await this._usuarioService.buscar();
         res.render(
@@ -42,18 +53,47 @@ export class UsuarioController {
             {
                 datos: {
                     usuarios,
+                    exito,
+                    error,
                 },
             },
         );
     }
 
+    @Get('ruta/editar-usuario/:idUsuario')
+    async rutaEditarUsuario(
+        @Query('error') error: string,
+        @Param('idUsuario') idUsuario: string,
+        @Res() res,
+    ) {
+        const consulta = {
+            where: {
+                id: idUsuario,
+            },
+        }
+        const arregloUsuarios = await this._usuarioService.buscar(consulta);
+        res.render(
+            'usuario/rutas/crear-usuario',
+            {
+                datos: {
+                    error,
+                    usuario: arregloUsuarios[0],
+                },
+                },
+        )
+        ;
+    }
+
     @Get('ruta/crear-usuario')
     rutaCrearUsuarios(
+        @Query('error') error: string,
         @Res() res,
     ) {
         res.render(
             'usuario/rutas/crear-usuario',
-        );
+            {datos: {error}},
+        )
+        ;
     }
 
     @Get('ejemploejs')
@@ -112,6 +152,7 @@ export class UsuarioController {
 ` + roles;
     }
 
+
     @Get('sesion')
     sesion(
         @Session() session,
@@ -132,24 +173,31 @@ export class UsuarioController {
     async crearUsuario(
         @Body() usuario: UsuarioEntity,
         @Session() session,
-    ): Promise<UsuarioEntity> {
-        // const isAdm = session.usuario.roles.find(rol => {
-        //     return rol === 'Administrador';
-        // });
-        // if (!isAdm) {
-        //     throw new UnauthorizedException('Error', 'No cuenta con permisos para realizar la acción');
-        // }
+        @Res() res,
+    ): Promise<void> {
+        const isAdm = session.usuario.roles.find(rol => {
+            return rol === 'Administrador';
+        });
+        if (!isAdm) {
+            throw new UnauthorizedException('Error', 'No cuenta con permisos para realizar la acción');
+        }
         const usuarioCreateDTO = new UsuarioCreateDto();
         usuarioCreateDTO.nombre = usuario.nombre;
         usuarioCreateDTO.cedula = usuario.cedula;
         const errores = await validate(usuarioCreateDTO);
         if (errores.length > 0) {
+            res.redirect('/usuario/ruta/crear-usuario?error= Error validando');
             throw new BadRequestException('Error validando');
         } else {
-            return this._usuarioService
-                .crearUno(
-                    usuario,
-                );
+            try {
+                this._usuarioService
+                    .crearUno(
+                        usuario,
+                    );
+                res.redirect('/usuario/ruta/mostrar-usuarios?exito=Usuario creado correctamente');
+            } catch (error) {
+                res.redirect('/usuario/ruta/crear-usuario?error= Error con el servidor');
+            }
         }
     }
 
@@ -175,6 +223,29 @@ export class UsuarioController {
                     +id,
                     usuario,
                 );
+        }
+    }
+
+    @Post()
+    async eliminarUnoPost(
+        @Param('id') id: string,
+        @Session() session,
+        @Res() res,
+    ): Promise<void> {
+        const isAdm = session.usuario.roles.find(rol => {
+            return rol === 'Administrador';
+        });
+        if (!isAdm) {
+            res.redirect(`usuario/ruta/mostrar-usuarios?error=No centa con permisos para realizar la acción`);
+        }
+        try {
+            await this._usuarioService
+                .borrarUno(
+                    +id,
+                );
+            res.redirect(`usuario/ruta/mostrar-usuarios?exito=Usuario con ID: ${id} eliminado`);
+        } catch (e) {
+            res.redirect(`usuario/ruta/mostrar-usuarios?error=Error del servidor`);
         }
     }
 

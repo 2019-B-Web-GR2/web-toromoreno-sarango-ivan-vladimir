@@ -1,6 +1,21 @@
-<%- include('../../compartido/cabecera')%>
+<%- include('../../compartido/cabecera') %>
 
 <div class="container">
+
+    <% if( datos.exito) { %>
+        <div class="alert alert-success"
+             role="alert">
+            <%= datos.exito %>
+        </div>
+    <% } %>
+
+    <% if( datos.error) { %>
+        <div class="alert alert-danger"
+             role="alert">
+            <%= datos.error %>
+        </div>
+    <% } %>
+
     <h1>Ruta mostrar usuario</h1>
 
     <a href="/usuario/ruta/crear-usuario">
@@ -18,5 +33,4 @@
 </div>
 
 
-
-<%- include('../../compartido/pie-de-pagina')%>
+<%- include('../../compartido/pie-de-pagina') %>
