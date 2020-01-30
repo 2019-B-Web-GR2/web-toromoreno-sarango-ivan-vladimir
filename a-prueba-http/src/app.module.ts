@@ -5,6 +5,8 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {UsuarioEntity} from './usuario/usuario.entity';
 import {UsuarioModule} from './usuario/usuario.module';
 import {UsuarioService} from "./usuario/usuario.service";
+import {MascotasModule} from "./mascotas/mascotas.module";
+import {MascotasEntity} from "./mascotas/mascotas.entity";
 
 @Module({
     imports: [
@@ -16,13 +18,15 @@ import {UsuarioService} from "./usuario/usuario.service";
             username: 'LazaMH',
             password: '1234',
             database: 'Prueba',
-            dropSchema: false,
+            dropSchema: true,
             entities: [
                 UsuarioEntity,
+                MascotasEntity,
             ],
             synchronize: true, //Con esto se crea en la base de datos
         }),
         UsuarioModule,
+        MascotasModule,
     ],
     controllers: [AppController],
     providers: [AppService],

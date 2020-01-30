@@ -14,8 +14,10 @@
           <td><%=usuario.nombre%></td>
           <td><%=usuario.cedula%></td>
           <td>
+          <a href="/usuario/ruta/editar-usuario/<%= usuario.id%>">
             <button type="button"
                     class="btn btn-info"> Editar </button>
+          </a>
             <form action="/usuario/<%=usuario.id%>"
                   method="POST"
              >

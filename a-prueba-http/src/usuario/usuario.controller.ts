@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import {UsuarioService} from "./usuario.service";
 import {UsuarioEntity} from "./usuario.entity";
-import {DeleteResult} from "typeorm";
+import {DeleteResult, Like} from "typeorm";
 import * as Joi from '@hapi/joi';
 import {UsuarioCreateDto} from "./usuario.create-dto";
 import {validate} from "class-validator";
@@ -45,9 +45,21 @@ export class UsuarioController {
     async rutaMostrarUsuarios(
         @Res() res,
         @Query('error') error: string,
-        @Query('exito') exito: string
+        @Query('exito') exito: string,
+        @Query('consultaUsuario') consultaUsuario: string,
     ) {
-        const usuarios = await this._usuarioService.buscar();
+        let consultaServicio
+        if (consultaUsuario) {
+            consultaServicio = [
+                {
+                    nombre: Like(`%${consultaUsuario}%`),
+                },
+                {
+                    cedula: Like(`%${consultaUsuario}%`),
+                },
+            ]
+        }
+        const usuarios = await this._usuarioService.buscar(consultaServicio);
         res.render(
             'usuario/rutas/buscar-mostrar-usuario',
             {
@@ -70,18 +82,28 @@ export class UsuarioController {
             where: {
                 id: idUsuario,
             },
+        };
+        try {
+            const arregloUsuarios = await this._usuarioService.buscar(consulta.where);
+            if (arregloUsuarios.length > 0) {
+                res.render(
+                    'usuario/rutas/crear-usuario',
+                    {
+                        datos: {
+                            error,
+                            usuario: arregloUsuarios[0],
+                        },
+                    },
+                );
+            } else {
+                res.redirect(
+                    '/usuario/rutas/mostrar-usuarios?error=No existe ese usuario',
+                );
+            }
+        } catch (e) {
+            console.log(error);
+            res.redirect('/usuario/rutas/mostrar-usuarios?error=Error editando usuario');
         }
-        const arregloUsuarios = await this._usuarioService.buscar(consulta);
-        res.render(
-            'usuario/rutas/crear-usuario',
-            {
-                datos: {
-                    error,
-                    usuario: arregloUsuarios[0],
-                },
-                },
-        )
-        ;
     }
 
     @Get('ruta/crear-usuario')
@@ -186,7 +208,7 @@ export class UsuarioController {
         usuarioCreateDTO.cedula = usuario.cedula;
         const errores = await validate(usuarioCreateDTO);
         if (errores.length > 0) {
-            res.redirect('/usuario/ruta/crear-usuario?error= Error validando');
+            res.redirect('usuario/ruta/crear-usuario?error= Error validando');
             throw new BadRequestException('Error validando');
         } else {
             try {
@@ -194,9 +216,9 @@ export class UsuarioController {
                     .crearUno(
                         usuario,
                     );
-                res.redirect('/usuario/ruta/mostrar-usuarios?exito=Usuario creado correctamente');
+                res.redirect('usuario/ruta/mostrar-usuarios?exito=Usuario creado correctamente');
             } catch (error) {
-                res.redirect('/usuario/ruta/crear-usuario?error= Error con el servidor');
+                res.redirect('usuario/ruta/crear-usuario?error= Error con el servidor');
             }
         }
     }

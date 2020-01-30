@@ -38,37 +38,6 @@ export class UsuarioService {
             nombre: 'ASC',
         },
     ): Promise<UsuarioEntity[]> {
-
-        //Exactamente el nombre o exactamente la cédula
-        const consultaWhere = [
-            {
-                nombre:  where,
-            },
-            {
-                cedula: where,
-            },
-        ];
-
-        // Exactamente el nombre o LIKE la cedula
-        const consultaWhereLike = [
-            {
-                nombre: Like('a%'),
-            },
-            {
-                cedula: Like('%a'),
-            },
-        ];
-
-        //Id sea mayor a 20
-
-        const consultaWhereMoreThan = {
-            id: MoreThan(20),
-        };
-
-        const consultaWhereLessThan = {
-            id: LessThan(20),
-        };
-
         return this._repositorioUsuario
             .find({
                 where: where,

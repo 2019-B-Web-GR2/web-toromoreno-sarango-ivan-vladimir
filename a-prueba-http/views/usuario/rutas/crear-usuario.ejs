@@ -1,14 +1,18 @@
 <%- include('../../compartido/cabecera') %>
 
+<% const estaEditando = datos.usuario.nombre != undefined %>
+
 <div class="container">
 
     <% if( datos.error) { %>
-    <div class="alert alert-danger"
-         role="alert">
-        <%= datos.error %>
-    </div>
+        <div class="alert alert-danger"
+             role="alert">
+            <%= datos.error %>
+        </div>
 
     <% } %>
+
+    <h2><%= estaEditando ? 'Editando a ' + datos.usuario.nombre : 'Crear Usuario' %></h2>
     <h1>Crear Usuario</h1>
 
     <form action="/usuario"
@@ -18,6 +22,7 @@
             <input id="nombreID"
                    type="text"
                    name="nombre"
+                   value="<%=estaEditando? datos.usuario.nombre: ""%>"
                    placeholder="Ej: Iván Toromoreno"
                    title="Ingresar nombre de usuario"
                    class="form-control">
@@ -31,6 +36,8 @@
             <input id="cedulaID"
                    type="text"
                    name="cedula"
+                   value="<%=estaEditando? datos.usuario.cedula: ""%>"
+                   <%=estaEditando ? 'disabled': ''%>
                    placeholder="Ej: 1723488988"
                    title="Ingresar la cédula del usuario"
                    class="form-control">

@@ -25,6 +25,22 @@
         </button>
     </a>
 
+    <form action="/usuario/ruta/mostrar-usuarios"
+          method="get">
+        <div class="form-group">
+            <label for="consultaId">Buscar usuario:</label>
+            <input type="text"
+                   id="consultaId"
+                   name="consultaUsuario"
+                   placeholder="Ej: 179181 o Iván"
+                   title="Ingresar la busqueda por cedula o nombre"
+                   class="form-control">
+            <small id="cedulaIDHelp"
+                   class="form-text text-muted">
+                Puede buscar por nombre o cedula
+            </small>
+        </div>
+    </form>
     <%- include('../componentes/mostrar-tabla',
     {
     usuarios: datos.usuarios
@@ -32,5 +48,73 @@
     ) %>
 </div>
 
+<button onclick="anadirImagen()">
+    Hola mundo
+</button>
+
+<div id="contenedor">
+
+</div>
+
+<select name="provincias" id="provincias" onchange="cargarCiudades()">
+    <option value="0">Seleccione</option>
+    <option value="1">Pichincha</option>
+    <option value="2">Guayas</option>
+</select>
+
+<div id="contenedorCiudades"></div>
+
+<script>
+    function cargarCiudades() {
+        let opciones = '';
+        const etiquetaProvincias = document.getElementById('provincias');
+        fetch(`/pepito/ciudades/${etiquetaProvincias.value}`)
+            .then(function (response) {
+                response.json()
+                    .then(ciudades => {
+                        ciudades.forEach(
+                            (ciudad) => {
+                                opciones += `<option value="${ciudad.id}">${ciudad.nombre}</option>`
+                            }
+                        )
+                        const select = `
+                        <select name="ciudad" id="ciudad">
+                            ${opciones}
+                        </select>
+                        `;
+                        const etiquetaSelect = document.createElement('div');
+                        etiquetaSelect.innerHTML = select;
+
+                        const contenedorCiudades = document.getElementById('contenedorCiudades');
+                        const existeNodo = contenedorCiudades.childElementCount > 0;
+                        if (existeNodo)
+                            contenedorCiudades.removeChild(contenedorCiudades.childNodes[0]);
+                        contenedorCiudades.appendChild(etiquetaSelect);
+                    })
+            })
+    }
+</script>
+
+<script>
+    function anadirImagen() {
+        const elementoContenedor = document.getElementById('contenedor');
+        const nombreEtiqueta = 'div';
+        const imgUrl = 'https://www.mazda.com.ec/hubfs/MAZDA/Modelos/Mazda%202/imagenes/mazda-2-sedan-2019-galeria-3.jpg';
+        const div = document.createElement(nombreEtiqueta);
+        div.innerHTML = `
+        <div>
+            <img src="${imgUrl}" width="200" height="200" alt="">
+            <p>Hola</p>
+            <button class="btn btn-info">Dale click papuh! </button>
+        </div>
+        `
+        elementoContenedor.appendChild(div);
+    }
+
+    function holaMundo(Evento) {
+        console.log(Evento);
+        console.log('Hola mundo :"3');
+    }
+</script>
 
 <%- include('../../compartido/pie-de-pagina') %>
