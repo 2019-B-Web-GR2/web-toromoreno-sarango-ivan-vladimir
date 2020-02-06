@@ -1,0 +1,85 @@
+/*
+Query Selectors (Como buscar a una etiqueta)
+-ID -> #NombreId
+-Clase -> .NombreClase
+-Etiqueta -> nombre-etiqueta
+
+(style="") X->NO! > ID > CLASE > ETIQUETA
+
+querySelector {
+    propiedadesCss: valoresCss;
+    propiedadesCss: valorDosCss;
+}
+*/
+
+#titulo {
+    background-color: blue;
+}
+
+.rojo {
+    background-color: red;
+}
+
+.cafe {
+    background-color: brown;
+}
+
+.tomate {
+    background-color: orange;
+}
+
+h1 {
+    background-color: green;
+}
+
+.web {
+    background-color: black;
+    color: white;
+}
+
+@media (min-width: 992px) {
+    .web {
+        background-color: black;
+        color: white;
+    }
+}
+
+@media (min-width: 992px) {
+    .web {
+        background-color: white;
+        color: black;
+    }
+}
+
+
+/*Animaciones*/
+
+.animacion-web {
+    background-color: blue;
+    color: orange;
+    animation-name: rojo-amarillo;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes rojo-amarillo {
+    0% {
+        background-color: red;
+        color: darkblue;
+        font-size: 10px;
+    }
+    50% {
+        background-color: yellow;
+        color: darkgreen;
+        font-size: 40px;
+    }
+    100% {
+        background-color: red;
+        color: darkblue;
+        font-size: 12px;
+    }
+}
+
+.transformacion {
+    transform: rotate(20deg);
+}
