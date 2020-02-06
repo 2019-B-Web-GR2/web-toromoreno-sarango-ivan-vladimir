@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hola bola</title>
+</head>
+<body>
+<% const version = "1.00" %>
+<% const total = 1 + 2; %>
+<% const adrian = {
+    nombre: 'Adrian',
+    esProfesor: true
+} %>
+<% const arregloNumeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] %>
+<% const urlBase = "" %>
+
+<% function anadirAnio(numero) {
+    return '2020-' + numero
+} %>
+<%= datos.joi %>
+<% arregloNumeros.forEach(numero => { %>
+    <%- include('componentes/numeros/mostrar-numero',
+    {
+    anadirAnio: anadirAnio,
+    numero: numero,
+    urlBase: urlBase
+    }
+    ); %>
+<% }) %>
+
+<% if(adrian.esProfesor){ %>
+    <h1>Bienvenido profe <%= adrian.nombre %></h1>
+    <p>Suma: <%= datos.suma(2, 3) %></p>
+<% } else { %>
+    <h1>Bienvenido estudiante</h1>
+    <p>Suma: <%= datos.suma(2, 3) %></p>
+<% } %>
+
+<h1>
+    Hola <%= datos.nombre %>
+</h1>
+<p>Version: <%= version %></p>
+<p>Total: <%= total %></p>
+<p>Arreglo <%= arregloNumeros %></p>
+<p><%= adrian %></p>
+</body>
+</html>

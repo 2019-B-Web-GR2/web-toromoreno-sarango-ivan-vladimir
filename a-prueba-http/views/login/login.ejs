@@ -1,0 +1,40 @@
+<%- include('..//compartido/cabecera') %>
+
+<div class="container">
+    <form action="/usuario/login"
+          method="POST">
+        <div class="form-group">
+            <label for="usernameID">Nombre</label>
+            <input id="usernameID"
+                   type="text"
+                   name="username"
+                   placeholder="Ej: iToromoreno"
+                   title="Ingresar nombre de usuario"
+                   class="form-control">
+        </div>
+        <small id="nombreIDHelp"
+               class="form-text text-muted">
+            Ingrese su nombre de usuario.
+        </small>
+        <div class="form-group">
+            <label for="passwordID">Cédula</label>
+            <input id="passwordID"
+                   type="password"
+                   name="password"
+                   title="Ingresar la contraseña del usuario"
+                   class="form-control">
+        </div>
+        <small id="nombreIDHelp"
+               class="form-text text-muted">
+            Ingrese su contraseña.
+        </small>
+        <button type="submit"
+                class="btn btn-success"> Logear usuario
+        </button>
+        <button type="reset"
+                class="btn btn-secondary"> Limpiar formulario
+        </button>
+    </form>
+</div>
+
+<%- include('../compartido/pie-de-pagina') %>
